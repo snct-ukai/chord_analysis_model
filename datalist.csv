@@ -1,0 +1,4 @@
+acoustic,banjo,bass,clarinet,oboe,organ,piano,trumpet
+A,A#,B,C,C#,D,D#,E,F,F#,G,G#
+major,minor,dim,aug,sus4,sus2,major_7,minor_7,dim_7,aug_7,sus4_7,sus2_7,power
+no_noise,noisy
