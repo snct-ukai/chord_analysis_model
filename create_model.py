@@ -1,4 +1,3 @@
-from logging import log
 import sklearn, librosa, numpy as np, csv, os
 from concurrent import futures
 
