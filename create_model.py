@@ -1,5 +1,6 @@
-import sklearn, librosa, numpy as np, csv, os
+import librosa, numpy as np, csv, os
 from concurrent import futures
+from sklearn.linear_model import LinearRegression
 
 TONES = 12
 CHORDS = 13
@@ -15,7 +16,7 @@ with open(filepath, "r") as f:
   chord_l = list[2]
   group = list[3]
 
-  chord_array = np.zeros((TONES, TONES, CHORDS))
+  chord_array = np.zeros((TONES, CHORDS, TONES))
 
   def analysis(index : int):
     chord_n = 0
@@ -29,7 +30,8 @@ with open(filepath, "r") as f:
         raw_chroma = librosa.feature.chroma_cqt(y = data, sr = sr)
 
         for k in range(0, len(raw_chroma[0])):
-          chord_array[index, :, chord_n] += raw_chroma[:, k]
+          chroma = np.array(raw_chroma[:, k])
+          chord_array[index, chord_n, :] += chroma.T
       
       chord_n += 1
   
@@ -41,6 +43,5 @@ with open(filepath, "r") as f:
       _ = futures.as_completed(fs=future_list)
   
   print("chord analysis is completed")
-  print(chord_array[0])
   
-  
+  model = LinearRegression
