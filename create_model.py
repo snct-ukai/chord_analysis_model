@@ -87,8 +87,6 @@ with open(filepath, "r") as f:
   for l in label:
     label_id.append(chord_label[l])
 
-  print(label_id)
-
   model = LogisticRegression()
   model.fit(chord_data, label_id)
 
