@@ -1,8 +1,6 @@
-import librosa, numpy as np, csv, os
+import librosa, numpy as np, csv, os, pickle
 from concurrent import futures
-from sklearn.linear_model import LinearRegression, LogisticRegression
-import pickle
-from sklearn.svm import SVC
+from sklearn.linear_model import LogisticRegression
 
 TONES = 12
 CHORDS = 13
@@ -29,9 +27,8 @@ chord_dic = {0: "C", 1: "C#", 2: "D", 3: "D#", 4: "E", 5: "F", 6: "F#", 7: "G", 
 chord_label = dict(zip(chord_dic.values(), chord_dic.keys()))
 
 namechange = {
-        "major": "", "minor": "m","dim": "dim", "aug": "aug", "sus4": "sus4",
-        "sus2": "sus2", "major_7": "7", "minor_7": "m7", "dim_7": "dim7",
-        "aug_7": "aug7", "sus4_7": "7sus4", "sus2_7": "7sus2", "power": "5",
+        "major": "", "minor": "m","dim": "dim", "aug": "aug", "sus4": "sus4", "sus2": "sus2", "major_7": "7", 
+        "minor_7": "m7", "dim_7": "dim7", "aug_7": "aug7", "sus4_7": "7sus4", "sus2_7": "7sus2", "power": "5",
       }
 
 with open(filepath, "r") as f:
@@ -73,8 +70,6 @@ with open(filepath, "r") as f:
       future = executor.submit(analysis, index = i)
       future_list.append(future)
       _ = futures.as_completed(fs=future_list)
-  
-  print("chord analysis is completed")
 
   chord_data = []
   label = []
