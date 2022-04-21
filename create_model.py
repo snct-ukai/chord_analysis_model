@@ -42,7 +42,7 @@ with open(filepath, "r") as f:
   chord_array = np.zeros((TONES, CHORDS, TONES))
   label_array = [[],[],[],[],[],[],[],[],[],[],[],[]]
 
-  def analysis(index : int):
+  def analysis(index : int, s : int):
     chord_n = 0
     tone = tone_l[index]
     
@@ -50,7 +50,7 @@ with open(filepath, "r") as f:
     for chord in chord_l:
       for inst in inst_l:
         basepath = tone + "/" + inst + "/" + chord + ".wav"
-        path = os.path.normpath(os.path.join(base, group[0] + "/" + basepath))
+        path = os.path.normpath(os.path.join(base, group[s] + "/" + basepath))
 
         data, sr = librosa.load(path)
         raw_chroma = librosa.feature.chroma_cqt(y = data, sr = sr)
@@ -65,9 +65,9 @@ with open(filepath, "r") as f:
     label_array[index] = labels
   
   future_list = []
-  with futures.ThreadPoolExecutor(max_workers=12) as executor:
-    for i in range(12):
-      future = executor.submit(analysis, index = i)
+  with futures.ThreadPoolExecutor(max_workers = 24) as executor:
+    for i in range(24):
+      future = executor.submit(analysis, index = (i % 12), s = (i // 12) )
       future_list.append(future)
       _ = futures.as_completed(fs=future_list)
 
