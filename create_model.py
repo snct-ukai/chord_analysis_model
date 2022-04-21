@@ -1,6 +1,8 @@
 import librosa, numpy as np, csv, os
 from concurrent import futures
-from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import LinearRegression, LogisticRegression
+import pickle
+from sklearn.svm import SVC
 
 TONES = 12
 CHORDS = 13
@@ -26,6 +28,12 @@ chord_dic = {0: "C", 1: "C#", 2: "D", 3: "D#", 4: "E", 5: "F", 6: "F#", 7: "G", 
 
 chord_label = dict(zip(chord_dic.values(), chord_dic.keys()))
 
+namechange = {
+        "major": "", "minor": "m","dim": "dim", "aug": "aug", "sus4": "sus4",
+        "sus2": "sus2", "major_7": "7", "minor_7": "m7", "dim_7": "dim7",
+        "aug_7": "aug7", "sus4_7": "7sus4", "sus2_7": "7sus2", "power": "5",
+      }
+
 with open(filepath, "r") as f:
   reader = csv.reader(f)
   list = [row for row in reader]
@@ -40,6 +48,7 @@ with open(filepath, "r") as f:
   def analysis(index : int):
     chord_n = 0
     tone = tone_l[index]
+    
     labels = []
     for chord in chord_l:
       for inst in inst_l:
@@ -53,7 +62,7 @@ with open(filepath, "r") as f:
           chroma = np.array(raw_chroma[:, k])
           chord_array[index, chord_n, :] += chroma.T
 
-      labels.append(chord_label[str(tone) + str(chord)])
+      labels.append(str(tone) + str(namechange[chord]))
       chord_n += 1
 
     label_array[index] = labels
@@ -75,10 +84,20 @@ with open(filepath, "r") as f:
   
   for chords in chord_array:
     for chord in chords:
-      chord_data.append(chord)
-
-  print(str(len(chord_data)) + "," + str(len(chord_data[0])))
-  print(str(len(label)))
+      chord_np = np.array(chord)
+      chord_np /= np.linalg.norm(chord_np, ord=2)
+      chord_data.append(chord_np)
   
-  model = LinearRegression()
-  model.fit(chord_data, label)
+  label_id = []
+  for l in label:
+    label_id.append(chord_label[l])
+
+  print(label_id)
+
+  model = LogisticRegression()
+  model.fit(chord_data, label_id)
+
+  filename = "chord_model.sav"
+  pickle.dump(model, open(filename, 'wb'))
+
+  print("model create success")
