@@ -1,6 +1,7 @@
 import librosa, numpy as np, csv, os, pickle
 from concurrent import futures
 from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC, LinearSVC
 
 TONES = 12
 CHORDS = 13
@@ -90,7 +91,19 @@ with open(filepath, "r") as f:
   model = LogisticRegression()
   model.fit(chord_data, label_id)
 
-  filename = "chord_model.sav"
+  filename = "chord_model_logistic.sav"
+  pickle.dump(model, open(filename, 'wb'))
+
+  model = SVC()
+  model.fit(chord_data, label_id)
+
+  filename = "chord_model_SVC.sav"
+  pickle.dump(model, open(filename, 'wb'))
+
+  model = LinearSVC()
+  model.fit(chord_data, label_id)
+
+  filename = "chord_model_LinearSVC.sav"
   pickle.dump(model, open(filename, 'wb'))
 
   print("model create success")
