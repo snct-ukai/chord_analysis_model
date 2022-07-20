@@ -329,43 +329,45 @@ def layer_6(inputs):
 def layer(inputs):
 
   x_1 = layer_6(inputs)
-  x_1 = Dense(156, activation='relu')(x_1)
-  x_1 = layer_6(x_1)
-  x_1 = Dense(156, activation='relu')(x_1)
-  x_1 = layer_6(x_1)
-  x_1 = Dense(156, activation='relu')(x_1)
+  x_1 = layer_5(x_1)
+  x_1 = layer_4(x_1)
 
-  x_2 = layer_5(inputs)
-  x_2 = Dense(156, activation='relu')(x_2)
+  x_2 = layer_6(x_1)
+  x_2 = layer_4(x_2)
   x_2 = layer_5(x_2)
-  x_2 = Dense(156, activation='relu')(x_2)
-  x_2 = layer_5(x_2)
-  x_2 = Dense(156, activation='relu')(x_2)
 
-  x_3 = layer_4(inputs)
-  x_3 = Dense(156, activation='relu')(x_3)
+  x_3 = layer_5(x_2)
   x_3 = layer_4(x_3)
-  x_3 = Dense(156, activation='relu')(x_3)
-  x_3 = layer_4(x_3)
-  x_3 = Dense(156, activation='relu')(x_3)
+  x_3 = layer_6(x_3)
+  
+  x_4 = layer_5(x_3)
+  x_4 = layer_6(x_4)
+  x_4 = layer_4(x_4)
 
-  x = Add()([x_1, x_2, x_3])
-  return x
+  x_5 = layer_4(x_4)
+  x_5 = layer_5(x_5)
+  x_5 = layer_6(x_5)
+
+  x_6 = layer_4(x_5)
+  x_6 = layer_6(x_6)
+  x_6 = layer_5(x_6)
+
+  return x_6
 
 x = layer(inputs)
-x = Dense(156, activation='relu')(x)
+x = layer_4(x)
 x = layer(x)
-x = Dense(156, activation='relu')(x)
+x = layer_5(x)
+x = layer(x)
+x = layer_6(x)
 
-x = cba(x, filters=1, kernel_size=(5), strides=(1))
-x = Dense(156, activation='relu')(x)
-x = cba(x, filters=1, kernel_size=(4), strides=(1))
-x = Dense(156, activation='relu')(x)
-x = cba(x, filters=1, kernel_size=(3), strides=(1))
-x = Dense(156, activation='relu')(x)
-x = cba(x, filters=1, kernel_size=(2), strides=(1))
-x = Dense(156, activation='relu')(x)
-x = cba(x, filters=1, kernel_size=(1), strides=(1))
+x_1 = cba(x, filters=1, kernel_size=(5), strides=(1))
+x_2 = cba(x, filters=1, kernel_size=(4), strides=(1))
+x_3 = cba(x, filters=1, kernel_size=(3), strides=(1))
+x_4 = cba(x, filters=1, kernel_size=(2), strides=(1))
+x_5 = cba(x, filters=1, kernel_size=(1), strides=(1))
+
+x = Add()([x_1, x_2, x_3, x_4, x_5])
 
 x = GlobalAveragePooling1D()(x)
 x = Dense(156, activation='relu')(x)
@@ -384,7 +386,7 @@ model.summary()
 
 print("start learning...")
 
-history = model.fit(x = x_train, y = y_train, epochs = 20000)
+history = model.fit(x = x_train, y = y_train, epochs = 40000)
 
 import matplotlib.pyplot as plt
 fig = plt.figure()
