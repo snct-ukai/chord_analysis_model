@@ -118,7 +118,7 @@ model.summary()
 
 print("start learning...")
 
-history = model.fit(x = x_train, y = y_train, epochs = 20000)
+history = model.fit(x = x_train, y = y_train, epochs = 40000)
 
 import matplotlib.pyplot as plt
 fig = plt.figure()
