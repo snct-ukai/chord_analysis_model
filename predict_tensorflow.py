@@ -47,6 +47,7 @@ def main():
     
     i += 1
     if(i > CPB):
+      chroma[:, j] /= np.linalg.norm(chroma[:, j], ord = 2)
       i = 0
       j += 1
   

@@ -11,9 +11,9 @@ import tensorflow
 import keras
 from keras.models import Model
 from keras.layers import Input, Dense, Dropout, Activation, Reshape
-from keras.layers import Conv1D, GlobalAveragePooling1D, MaxPooling1D
+from keras.layers import Conv1D, GlobalAveragePooling1D
 from keras.layers import BatchNormalization, Add
-from keras.callbacks import EarlyStopping, ModelCheckpoint
+from keras.regularizers import l2
 
 # redefine target data into one hot vector
 classes = 156
@@ -21,8 +21,9 @@ y_train = keras.utils.to_categorical(y_train, classes)
 
 def cba(inputs, filters, kernel_size, strides):
   x = Conv1D(filters, kernel_size=kernel_size, strides=strides, padding='same')(inputs)
+  x = Dropout(0.3)(x)
   x = BatchNormalization()(x)
-  x = Activation("relu")(x)
+  x = Activation("elu")(x)
   return x
 
 # define CNN
@@ -34,45 +35,73 @@ def layer_1(inputs):
   x_1 = cba(x_1, filters=32, kernel_size=(1), strides=(1))
   x_1 = cba(x_1, filters=64, kernel_size=(2), strides=(1))
   x_1 = cba(x_1, filters=64, kernel_size=(1), strides=(1))
+  x_1 = cba(x_1, filters=128, kernel_size=(2), strides=(1))
+  x_1 = cba(x_1, filters=128, kernel_size=(1), strides=(1))
+  #x_1 = cba(x_1, filters=256, kernel_size=(2), strides=(1))
+  #x_1 = cba(x_1, filters=256, kernel_size=(1), strides=(1))
 
   x_2 = cba(inputs, filters=32, kernel_size=(3), strides=(1))
   x_2 = cba(x_2, filters=32, kernel_size=(1), strides=(1))
   x_2 = cba(x_2, filters=64, kernel_size=(3), strides=(1))
   x_2 = cba(x_2, filters=64, kernel_size=(1), strides=(1))
+  x_2 = cba(x_1, filters=128, kernel_size=(3), strides=(1))
+  x_2 = cba(x_2, filters=128, kernel_size=(1), strides=(1))
+  #x_2 = cba(x_2, filters=256, kernel_size=(3), strides=(1))
+  #x_2 = cba(x_2, filters=256, kernel_size=(1), strides=(1))
 
   x_3 = cba(inputs, filters=32, kernel_size=(4), strides=(1))
   x_3 = cba(x_3, filters=32, kernel_size=(1), strides=(1))
   x_3 = cba(x_3, filters=64, kernel_size=(4), strides=(1))
   x_3 = cba(x_3, filters=64, kernel_size=(1), strides=(1))
+  x_3 = cba(x_3, filters=128, kernel_size=(4), strides=(1))
+  x_3 = cba(x_3, filters=128, kernel_size=(1), strides=(1))
+  #x_3 = cba(x_3, filters=256, kernel_size=(4), strides=(1))
+  #x_3 = cba(x_3, filters=256, kernel_size=(1), strides=(1))
 
   x_4 = cba(inputs, filters=32, kernel_size=(5), strides=(1))
   x_4 = cba(x_4, filters=32, kernel_size=(1), strides=(1))
   x_4 = cba(x_4, filters=64, kernel_size=(5), strides=(1))
   x_4 = cba(x_4, filters=64, kernel_size=(1), strides=(1))
+  x_4 = cba(x_4, filters=128, kernel_size=(5), strides=(1))
+  x_4 = cba(x_4, filters=128, kernel_size=(1), strides=(1))
+  #x_4 = cba(x_4, filters=256, kernel_size=(5), strides=(1))
+  #x_4 = cba(x_4, filters=256, kernel_size=(1), strides=(1))
 
   x_5 = cba(inputs, filters=32, kernel_size=(6), strides=(1))
   x_5 = cba(x_5, filters=32, kernel_size=(1), strides=(1))
   x_5 = cba(x_5, filters=64, kernel_size=(6), strides=(1))
   x_5 = cba(x_5, filters=64, kernel_size=(1), strides=(1))
+  x_5 = cba(x_5, filters=128, kernel_size=(6), strides=(1))
+  x_5 = cba(x_5, filters=128, kernel_size=(1), strides=(1))
+  #x_5 = cba(x_5, filters=256, kernel_size=(6), strides=(1))
+  #x_5 = cba(x_5, filters=256, kernel_size=(1), strides=(1))
 
   x = Add()([x_1, x_2, x_3, x_4, x_5])
   return x
 
 x = layer_1(inputs)
+x = Dropout(0.3)(x)
 
-#x_1 = cba(x, filters=1, kernel_size=(5), strides=(1))
-#x_2 = cba(x, filters=1, kernel_size=(4), strides=(1))
-#x_3 = cba(x, filters=1, kernel_size=(3), strides=(1))
-#x_4 = cba(x, filters=1, kernel_size=(2), strides=(1))
-#x_5 = cba(x, filters=1, kernel_size=(1), strides=(1))
-#
-#x = Add()([x_1, x_2, x_3, x_4, x_5])
-#x = cba(inputs, filters=12, kernel_size=(5), strides=(1))
+x = Activation("sigmoid")(x)
 
-#x = cba(x, filters=1, kernel_size=(1), strides=(1))
+x_1 = cba(x, filters=512, kernel_size=(5), strides=(1))
+x_2 = cba(x, filters=512, kernel_size=(4), strides=(1))
+x_3 = cba(x, filters=512, kernel_size=(3), strides=(1))
+x_4 = cba(x, filters=512, kernel_size=(2), strides=(1))
+x_5 = cba(x, filters=512, kernel_size=(1), strides=(1))
+
+x = Add()([x_1, x_2, x_3, x_4, x_5])
+x = Activation("relu")(x)
+
+x = cba(x, filters=1024, kernel_size=(11), strides=(1))
+x = Activation("sigmoid")(x)
+
+x = cba(x, filters=512, kernel_size=(11), strides=(1))
+x = Activation("elu")(x)
 
 x = GlobalAveragePooling1D()(x)
-x = Dense(156, activation='elu')(x)
+x = Dropout(0.3)(x)
+x = Dense(156, activation='relu')(x)
 x = Dense(156, activation='softmax')(x)
 
 model = Model(inputs, x)
@@ -89,7 +118,7 @@ model.summary()
 
 print("start learning...")
 
-history = model.fit(x = x_train, y = y_train, epochs = 400)
+history = model.fit(x = x_train, y = y_train, epochs = 20000)
 
 import matplotlib.pyplot as plt
 fig = plt.figure()
