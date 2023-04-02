@@ -1,3 +1,6 @@
+import tensorflow_addons as tfa
+from keras.layers import Conv1D, GlobalAveragePooling1D
+from keras.layers import Input, Dense, Dropout, Activation, Reshape
 import matplotlib.pyplot as plt
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 from keras.layers import BatchNormalization, Add
@@ -62,19 +65,6 @@ def layer_1(inputs):
     x = Add()([x_1, x_2, x_3, x_4, x_5])
     return x
 
-#x = layer_1(inputs)
-
-#x_1 = cba(x, filters=1, kernel_size=(5), strides=(1))
-#x_2 = cba(x, filters=1, kernel_size=(4), strides=(1))
-#x_3 = cba(x, filters=1, kernel_size=(3), strides=(1))
-#x_4 = cba(x, filters=1, kernel_size=(2), strides=(1))
-#x_5 = cba(x, filters=1, kernel_size=(1), strides=(1))
-#
-#x = Add()([x_1, x_2, x_3, x_4, x_5])
-#x = cba(inputs, filters=12, kernel_size=(5), strides=(1))
-
-#x = cba(x, filters=1, kernel_size=(1), strides=(1))
-
 
 x_1 = Conv1D(filters=32, kernel_size=2, strides=1, padding='same')(inputs)
 x_1 = Conv1D(filters=64, kernel_size=2, strides=1, padding='same')(inputs)
@@ -94,10 +84,6 @@ x = Dropout(0.3)(x)
 x = Dense(512, activation='relu')(x)
 x = GlobalAveragePooling1D()(x)
 x = Dense(156, activation='softmax')(x)
-
-#x = GlobalAveragePooling1D()(x)
-#x = Dense(156, activation='elu')(x)
-#x = Dense(156, activation='softmax')(x)
 
 model = Model(inputs, x)
 

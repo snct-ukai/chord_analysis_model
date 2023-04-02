@@ -24,6 +24,7 @@ with open(filepath, "r") as f:
     chord_data += raw_chroma[:, i]
   
   chord_data = np.array([chord_data])
+  chord_data /= np.linalg.norm(chord_data, ord=2)
   print(chord_data.T.shape)
   plt.imshow(chord_data.T, cmap=plt.cm.jet, interpolation='nearest')
   plt.show()

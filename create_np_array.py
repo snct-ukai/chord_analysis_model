@@ -56,6 +56,7 @@ with open(filepath, "r") as f:
 
         for k in range(0, len(raw_chroma[0])):
           chroma = np.array(raw_chroma[:, k])
+          chroma /= np.linalg.norm(chroma)
           chord_array[index, chord_n, :] += chroma.T
 
       labels.append(str(tone) + str(namechange[chord]))
